@@ -4,8 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --compilers js:babel-register"
   },
   "author": "Thomas Broadley <buriedunderbooks@hotmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-preset-es2015": "^6.9.0",
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3"
+  }
 }
