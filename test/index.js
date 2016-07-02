@@ -1,10 +1,12 @@
 import { transform } from 'babel-core';
 import { expect } from 'chai';
 
+function plugin(str) {
+  return transform(str, { plugins: ['./index'] }).code;
+}
+
 describe('babel-plugin-lodash-fp', () => {
   it('reverses an identifier', () => {
-    expect(
-      transform('var asdf;', { plugins: ['./index.js'] }).code
-    ).to.equal('var fdsa;');
+    expect(plugin('var asdf;')).to.equal('var fdsa;');
   });
 });
