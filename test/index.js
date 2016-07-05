@@ -15,5 +15,10 @@ describe('babel-plugin-lodash-fp', () => {
       '_.words("a string");',
       '_.words("a string");'
     ));
+
+    it('properly modifies simple 2-ary methods', test(
+      '_.pick([1, 2, 3], _.even);',
+      '_.pick(_.even)([1, 2, 3]);'
+    ));
   });
 });

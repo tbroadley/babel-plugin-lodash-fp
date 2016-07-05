@@ -4,6 +4,8 @@ import _ from 'lodash/fp';
 export default ({ types: t }) => ({
   visitor: {
     CallExpression(path) {
+      if (path.node.replaced) return;
+
       if (!t.isMemberExpression(path.node.callee)) return;
 
       const callee = path.node.callee;
@@ -28,8 +30,16 @@ export default ({ types: t }) => ({
       )(_.range(1, 5));
 
       switch (fnArity) {
-        case '1':
-          return;
+        case '2':
+          const args = path.node.arguments;
+
+          const innerCallExpression = t.callExpression(callee, [args[1]]);
+          innerCallExpression.replaced = true;
+
+          const toReplace = t.callExpression(innerCallExpression, [args[0]]);
+          toReplace.replaced = true;
+
+          path.replaceWith(toReplace);
       }
     }
   }
