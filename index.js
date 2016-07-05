@@ -2,7 +2,7 @@ import m from './src/_mapping';
 import * as t from 'babel-types';
 import _ from 'lodash/fp';
 
-function modifyFunctionCall(path, fnName) {
+function updateFunctionCall(fnName, callee, args) {
   let fnArity;
   _.flow(
     _.map(_.toString),
@@ -24,7 +24,6 @@ function modifyFunctionCall(path, fnName) {
     index => _.indexOf(index)(fnRearg)
   )(_.range(0, fnRearg.length));
 
-  const { callee, arguments: args } = path.node;
   let updated;
   _.forEach(index => {
     updated = t.callExpression(
@@ -33,21 +32,21 @@ function modifyFunctionCall(path, fnName) {
     );
     updated.replaced = true;
   })(invertedRearg);
-  path.replaceWith(updated);
+  return updated;
 }
 
-function modifyChain(path) {
-
+function updateChain(path) {
+  return path;
 }
 
 export default () => ({
   visitor: {
     CallExpression(path) {
-      const { replaced, callee } = path.node;
+      const { replaced, callee, arguments: args } = path.node;
       if (replaced) return;
 
       if (t.isIdentifier(callee) && callee.name === '_') {
-        modifyChain(path);
+        path.replaceWith(updateChain(path));
       } else if (t.isMemberExpression(callee)) {
         const { object, property, computed } = callee;
         if (!t.isIdentifier(object) || object.name !== '_') return;
@@ -60,7 +59,11 @@ export default () => ({
           fnName = property.name;
         }
 
-        fnName === 'chain' ? modifyChain(path) : modifyFunctionCall(path, fnName);
+        path.replaceWith(
+          fnName === 'chain' ?
+          updateChain(path) :
+          updateFunctionCall(fnName, callee, args)
+        );
       }
     }
   }
