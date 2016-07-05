@@ -29,18 +29,25 @@ export default ({ types: t }) => ({
         })
       )(_.range(1, 5));
 
-      switch (fnArity) {
-        case '2':
-          const args = path.node.arguments;
-
-          const innerCallExpression = t.callExpression(callee, [args[1]]);
-          innerCallExpression.replaced = true;
-
-          const toReplace = t.callExpression(innerCallExpression, [args[0]]);
-          toReplace.replaced = true;
-
-          path.replaceWith(toReplace);
+      let fnRearg;
+      if (fnArity === '1') {
+        fnRearg = [0];
+      } else if (m.skipRearg[fnName]) {
+        fnRearg = _.flow(_.toNumber, _.range(0))(fnArity);
+      } else {
+        fnRearg = m.methodRearg[fnName] || m.aryRearg[fnArity];
       }
+
+      const args = path.node.arguments;
+      let updated;
+      _.forEach(index => {
+        updated = t.callExpression(
+          updated || callee,
+          [args[index]]
+        );
+        updated.replaced = true;
+      })(fnRearg);
+      path.replaceWith(updated);
     }
   }
 });

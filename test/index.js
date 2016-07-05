@@ -20,5 +20,10 @@ describe('babel-plugin-lodash-fp', () => {
       '_.pick([1, 2, 3], _.even);',
       '_.pick(_.even)([1, 2, 3]);'
     ));
+
+    it('properly modifies 2-ary methods whose argument order does not change', test(
+      '_.subtract(5, 3);',
+      '_.subtract(5)(3);'
+    ));
   });
 });
