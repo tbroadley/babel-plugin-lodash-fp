@@ -57,5 +57,20 @@ describe('babel-plugin-lodash-fp', () => {
       '_.chain(a).map(b).value();',
       '_.flow(_.map(b))(a);'
     ));
+
+    it('transforms an implicit chain', test(
+      '_(a).map(b).value();',
+      '_.flow(_.map(b))(a);'
+    ));
+
+    it('transforms a no-op simple chain', test(
+      '_.chain(a).value();',
+      'a;'
+    ));
+
+    it('transforms a no-op implicit chain', test(
+      '_(a).value();',
+      'a;'
+    ));
   });
 });

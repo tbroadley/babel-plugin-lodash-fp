@@ -8,6 +8,11 @@ export default (path) => {
   const { parentPath, node: { arguments: flowArgs }} = path;
 
   let currentPath = parentPath;
+  if (getPropertyName(currentPath.node) === 'value') {
+    currentPath.parentPath.replaceWith(_.first(flowArgs));
+    return;
+  }
+
   let loop = true;
   let flowFunctions = [];
   while (loop) {
