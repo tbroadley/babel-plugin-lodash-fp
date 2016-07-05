@@ -25,5 +25,15 @@ describe('babel-plugin-lodash-fp', () => {
       '_.subtract(5, 3);',
       '_.subtract(5)(3);'
     ));
+
+    it('properly modifies simple 3-ary methods', test(
+      '_.clamp(n, 0, 10);',
+      '_.clamp(0)(10)(n);'
+    ));
+
+    it('properly modifies 3-ary methods with custom argument reordering', test(
+      '_.xorBy([1, 2], [1, 3], _.identity);',
+      '_.xorBy(_.identity)([1, 2])([1, 3]);'
+    ));
   });
 });

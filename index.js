@@ -38,6 +38,10 @@ export default ({ types: t }) => ({
         fnRearg = m.methodRearg[fnName] || m.aryRearg[fnArity];
       }
 
+      const invertedRearg = _.map(
+        index => _.indexOf(index)(fnRearg)
+      )(_.range(0, fnRearg.length));
+
       const args = path.node.arguments;
       let updated;
       _.forEach(index => {
@@ -46,7 +50,7 @@ export default ({ types: t }) => ({
           [args[index]]
         );
         updated.replaced = true;
-      })(fnRearg);
+      })(invertedRearg);
       path.replaceWith(updated);
     }
   }
