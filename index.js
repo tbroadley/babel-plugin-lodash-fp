@@ -1,10 +1,7 @@
 import * as t from 'babel-types';
 
 import updateFunctionCall from './src/update-function-call';
-
-function updateChain(path) {
-  return path;
-}
+import updateChain from './src/update-chain';
 
 export default () => ({
   visitor: {
