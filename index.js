@@ -20,19 +20,14 @@ function updateFunctionCall(fnName, callee, args) {
     fnRearg = m.methodRearg[fnName] || m.aryRearg[fnArity];
   }
 
-  const invertedRearg = _.map(
-    index => _.indexOf(index)(fnRearg)
+  return _.flow(
+    _.map(_.indexOf(_, fnRearg)),
+    _.reduce(
+      (updated, index) => _.set('replaced')(true)(
+        t.callExpression(updated, _.compact([args[index]]))
+      )
+    )(callee)
   )(_.range(0, fnRearg.length));
-
-  let updated;
-  _.forEach(index => {
-    updated = t.callExpression(
-      updated || callee,
-      args[index] ? [args[index]] : []
-    );
-    updated.replaced = true;
-  })(invertedRearg);
-  return updated;
 }
 
 function updateChain(path) {
