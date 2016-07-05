@@ -7,8 +7,7 @@ function modifyFunctionCall(path, fnName) {
   _.flow(
     _.map(_.toString),
     _.forEach(arity => {
-      const nAryFunctions = m.aryMethod[_.toString(arity)];
-      if (_.includes(fnName)(nAryFunctions)) fnArity = arity;
+      if (_.includes(fnName)(m.aryMethod[arity])) fnArity = arity;
     })
   )(_.range(1, 5));
 
@@ -25,8 +24,7 @@ function modifyFunctionCall(path, fnName) {
     index => _.indexOf(index)(fnRearg)
   )(_.range(0, fnRearg.length));
 
-  const callee = path.node.callee;
-  const args = path.node.arguments;
+  const { callee, arguments: args } = path.node;
   let updated;
   _.forEach(index => {
     updated = t.callExpression(
@@ -45,18 +43,17 @@ function modifyChain(path) {
 export default () => ({
   visitor: {
     CallExpression(path) {
-      const node = path.node;
-      if (node.replaced) return;
+      const { replaced, callee } = path.node;
+      if (replaced) return;
 
-      const callee = node.callee;
       if (t.isIdentifier(callee) && callee.name === '_') {
         modifyChain(path);
       } else if (t.isMemberExpression(callee)) {
-        const { object, property } = callee;
+        const { object, property, computed } = callee;
         if (!t.isIdentifier(object) || object.name !== '_') return;
 
         let fnName;
-        if (callee.computed) {
+        if (computed) {
           if (!t.isStringLiteral(property)) return;
           fnName = property.value;
         } else {
