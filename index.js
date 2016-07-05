@@ -3,6 +3,8 @@ import * as t from 'babel-types';
 import updateFunctionCall from './src/update-function-call';
 import updateChain from './src/update-chain';
 
+import getPropertyName from './src/get-property-name';
+
 export default () => ({
   visitor: {
     CallExpression(path) {
@@ -12,17 +14,10 @@ export default () => ({
       if (t.isIdentifier(callee) && callee.name === '_') {
         path.replaceWith(updateChain(path));
       } else if (t.isMemberExpression(callee)) {
-        const { object, property, computed } = callee;
+        const { object } = callee;
         if (!t.isIdentifier(object) || object.name !== '_') return;
 
-        let fnName;
-        if (computed) {
-          if (!t.isStringLiteral(property)) return;
-          fnName = property.value;
-        } else {
-          fnName = property.name;
-        }
-
+        const fnName = getPropertyName(callee);
         path.replaceWith(
           fnName === 'chain' ?
           updateChain(path) :
