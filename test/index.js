@@ -10,8 +10,10 @@ function test(toTest, expected) {
 }
 
 describe('babel-plugin-lodash-fp', () => {
-  it('reverses an identifier', test(
-    'var asdf;',
-    'var fdsa;'
-  ));
+  describe('method transformation', () => {
+    it('does not modify 1-ary methods', test(
+      '_.words("a string");',
+      '_.words("a string");'
+    ));
+  });
 });

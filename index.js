@@ -1,7 +1,33 @@
+import m from './src/_mapping';
+import _ from 'lodash/fp';
+
 export default ({ types: t }) => ({
   visitor: {
-    Identifier(path) {
-      path.node.name = path.node.name.split('').reverse().join('');
+    CallExpression(path) {
+      if (!t.isMemberExpression(path.node.callee)) return;
+
+      const callee = path.node.callee;
+      if (!t.isIdentifier(callee.object) || callee.object.name !== '_') return;
+
+      const property = callee.property;
+      let fnName;
+      if (callee.computed) {
+        if (!t.isStringLiteral(property)) return;
+        fnName = property.value;
+      } else {
+        fnName = property.name;
+      }
+
+      let fnArity;
+      _.forEach(_.range(1, 5), arity => {
+        const nAryFunctions = m.aryMethod[_.toString(arity)];
+        if (_.includes(fnName)(nAryFunctions)) fnArity = arity;
+      });
+
+      switch (fnArity) {
+        case 1:
+          return;
+      }
     }
   }
 });
