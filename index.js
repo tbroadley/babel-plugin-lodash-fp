@@ -19,13 +19,16 @@ export default ({ types: t }) => ({
       }
 
       let fnArity;
-      _.forEach(_.range(1, 5), arity => {
-        const nAryFunctions = m.aryMethod[_.toString(arity)];
-        if (_.includes(fnName)(nAryFunctions)) fnArity = arity;
-      });
+      _.flow(
+        _.map(_.toString),
+        _.forEach(arity => {
+          const nAryFunctions = m.aryMethod[_.toString(arity)];
+          if (_.includes(fnName)(nAryFunctions)) fnArity = arity;
+        })
+      )(_.range(1, 5));
 
       switch (fnArity) {
-        case 1:
+        case '1':
           return;
       }
     }
