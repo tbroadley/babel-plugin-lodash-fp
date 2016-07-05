@@ -65,12 +65,12 @@ describe('babel-plugin-lodash-fp', () => {
 
     it('transforms a no-op simple chain', test(
       '_.chain(a).value();',
-      'a;'
+      '_.flow()(a);'
     ));
 
     it('transforms a no-op implicit chain', test(
       '_(a).value();',
-      'a;'
+      '_.flow()(a);'
     ));
   });
 });

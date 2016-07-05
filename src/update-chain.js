@@ -9,7 +9,15 @@ export default (path) => {
 
   let currentPath = parentPath;
   if (getPropertyName(currentPath.node) === 'value') {
-    currentPath.parentPath.replaceWith(_.first(flowArgs));
+    currentPath.parentPath.replaceWith(
+      setReplaced(t.callExpression(
+        setReplaced(t.callExpression(
+          t.memberExpression(t.identifier('_'), t.identifier('flow')),
+          []
+        )),
+        flowArgs
+      ))
+    );
     return;
   }
 
