@@ -47,7 +47,7 @@ export default ({ types: t }) => ({
       _.forEach(index => {
         updated = t.callExpression(
           updated || callee,
-          [args[index]]
+          args[index] ? [args[index]] : []
         );
         updated.replaced = true;
       })(invertedRearg);

@@ -45,5 +45,10 @@ describe('babel-plugin-lodash-fp', () => {
       '_.updateWith(a, b, c, d);',
       '_.updateWith(d)(b)(c)(a);'
     ));
+
+    it('handles usage of default arguments', test(
+      '_.xorBy([1, 2], [1, 3]);',
+      '_.xorBy()([1, 2])([1, 3]);'
+    ));
   });
 });
