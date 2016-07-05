@@ -8,23 +8,11 @@ export default (path) => {
   const { parentPath, node: { arguments: flowArgs }} = path;
 
   let currentPath = parentPath;
-  if (getPropertyName(currentPath.node) === 'value') {
-    currentPath.parentPath.replaceWith(
-      setReplaced(t.callExpression(
-        setReplaced(t.callExpression(
-          t.memberExpression(t.identifier('_'), t.identifier('flow')),
-          []
-        )),
-        flowArgs
-      ))
-    );
-    return;
-  }
-
-  let loop = true;
+  let loop = getPropertyName(currentPath.node) !== 'value';
   let flowFunctions = [];
   while (loop) {
-    const { node, parentPath: { node: { arguments: args } } } = currentPath;
+    const { node } = currentPath;
+    const args = currentPath.parentPath.node.arguments;
 
     flowFunctions.push({
       name: getPropertyName(node),
@@ -32,8 +20,8 @@ export default (path) => {
     });
 
     const grandparentPath = currentPath.parentPath.parentPath;
-    const { grandparentNode } = grandparentPath;
-    const { greatGrandparentNode } = grandparentPath.parentPath;
+    const grandparentNode = grandparentPath.node;
+    const greatGrandparentNode = grandparentPath.parentPath.node;
     loop = t.isMemberExpression(grandparentNode) &&
            getPropertyName(grandparentNode) !== 'value' &&
            t.isCallExpression(greatGrandparentNode);
