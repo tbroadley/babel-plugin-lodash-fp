@@ -2,21 +2,7 @@ import m from './src/_mapping';
 import * as t from 'babel-types';
 import _ from 'lodash/fp';
 
-function modifyFunctionCall(path) {
-  if (!t.isMemberExpression(path.node.callee)) return;
-
-  const callee = path.node.callee;
-  if (!t.isIdentifier(callee.object) || callee.object.name !== '_') return;
-
-  const property = callee.property;
-  let fnName;
-  if (callee.computed) {
-    if (!t.isStringLiteral(property)) return;
-    fnName = property.value;
-  } else {
-    fnName = property.name;
-  }
-
+function modifyFunctionCall(path, fnName) {
   let fnArity;
   _.flow(
     _.map(_.toString),
@@ -39,6 +25,7 @@ function modifyFunctionCall(path) {
     index => _.indexOf(index)(fnRearg)
   )(_.range(0, fnRearg.length));
 
+  const callee = path.node.callee;
   const args = path.node.arguments;
   let updated;
   _.forEach(index => {
@@ -51,12 +38,33 @@ function modifyFunctionCall(path) {
   path.replaceWith(updated);
 }
 
+function modifyChain(path) {
+
+}
+
 export default () => ({
   visitor: {
     CallExpression(path) {
-      if (path.node.replaced) return;
+      const node = path.node;
+      if (node.replaced) return;
 
-      modifyFunctionCall(path);
+      const callee = node.callee;
+      if (t.isIdentifier(callee) && callee.name === '_') {
+        modifyChain(path);
+      } else if (t.isMemberExpression(callee)) {
+        const { object, property } = callee;
+        if (!t.isIdentifier(object) || object.name !== '_') return;
+
+        let fnName;
+        if (callee.computed) {
+          if (!t.isStringLiteral(property)) return;
+          fnName = property.value;
+        } else {
+          fnName = property.name;
+        }
+
+        fnName === 'chain' ? modifyChain(path) : modifyFunctionCall(path, fnName);
+      }
     }
   }
 });
