@@ -35,5 +35,15 @@ describe('babel-plugin-lodash-fp', () => {
       '_.xorBy([1, 2], [1, 3], _.identity);',
       '_.xorBy(_.identity)([1, 2])([1, 3]);'
     ));
+
+    it('properly modifies simple 4-ary methods', test(
+      '_.fill([1, 2, 3], 5, 0, 2);',
+      '_.fill(0)(2)(5)([1, 2, 3]);'
+    ));
+
+    it('properly modifies 4-ary methods with custom argument reordering', test(
+      '_.updateWith(a, b, c, d);',
+      '_.updateWith(d)(b)(c)(a);'
+    ));
   });
 });
