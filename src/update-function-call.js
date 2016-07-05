@@ -2,6 +2,7 @@ import * as t from 'babel-types';
 import _ from 'lodash/fp';
 
 import m from './_mapping';
+import setReplaced from './set-replaced';
 
 export default (fnName, callee, args) => {
   let fnArity;
@@ -24,7 +25,7 @@ export default (fnName, callee, args) => {
   return _.flow(
     _.map(_.indexOf(_, fnRearg)),
     _.reduce(
-      (updated, index) => _.set('replaced')(true)(
+      (updated, index) => setReplaced(
         t.callExpression(updated, _.compact([args[index]]))
       )
     )(callee)
