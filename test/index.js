@@ -51,4 +51,11 @@ describe('babel-plugin-lodash-fp', () => {
       '_.xorBy()([1, 2])([1, 3]);'
     ));
   });
+
+  describe('chaining', () => {
+    it('transforms a simple chain', test(
+      '_.chain(a).map(b).value();',
+      '_.flow(_.map(b))(a);'
+    ));
+  });
 });
