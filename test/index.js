@@ -1,5 +1,6 @@
 import { transform } from 'babel-core';
 import { expect } from 'chai';
+import _ from 'lodash/fp';
 
 function plugin(str) {
   return transform(str, { plugins: ['./index'] }).code;
@@ -96,7 +97,7 @@ describe('babel-plugin-lodash-fp', () => {
     ));
 
     it('transforms an arrow function partial with two parameters', test(
-      '(a, f) => _.map(a, f);',
+      '(a, f) => _.map(f, a);',
       '_.map;'
     ));
 
@@ -115,16 +116,26 @@ describe('babel-plugin-lodash-fp', () => {
       '_.flow(_.map(f), _.filter(g));'
     ));
 
+    it('uses placeholders correctly when transforming arrow functions', test(
+      'f => _.map([1, 2, 3], f);',
+      'f => _.map(f, [1, 2, 3]);'
+    ));
+
     it('does not transform an arrow function that cannot be transformed', test(
-      '(a, b) => _.map(b, a);',
-      '(a, b) => _.map(b, a);'
+      '(a, f) => _.map(a, f);',
+      '(a, f) => _.map(f, a);'
     ));
   });
 
   describe('anonymous function partials', () => {
     it('transforms an anonymous function partial with one parameter', test(
-      '(function(a) { return _.map(a, f); })(b);',
+      '(function (a) { return _.map(a, f); })(b);',
       '_.map(f)(b);'
+    ));
+
+    it('does not transform an anonymous function that cannot be transformed', test(
+      '(function (a, f) { return _.map(a, f); })(c, d);',
+      '(function (a, f) {\n  return _.map(f, a);\n})(c, d);'
     ));
   });
 });

@@ -11,7 +11,7 @@ export default (path, returnNode, params) => {
   if (isLodashCall(callee)) {
     const partialArgs = _.flow(
       _.reverse,
-      _.zip(_, params),
+      _.zip(_, _.reverse(params)),
       _.dropWhile(([arg, param]) => arg && param && arg.name === param.name),
       _.map(_.first),
       _.reverse
