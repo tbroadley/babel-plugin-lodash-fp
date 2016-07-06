@@ -104,5 +104,15 @@ describe('babel-plugin-lodash-fp', () => {
       'a => _.chain(a).map(f).value();',
       '_.flow(_.map(f));'
     ));
+
+    it('transforms an arrow function partial that uses implicit chaining', test(
+      'a => _(a).map(f).value();',
+      '_.flow(_.map(f));'
+    ));
+
+    it('transforms an arrow function partial that uses chaining with multiple methods', test(
+      'a => _(a).map(f).filter(g).value();',
+      '_.flow(_.map(f), _.filter(g));'
+    ));
   });
 });
