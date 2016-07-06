@@ -82,5 +82,10 @@ describe('babel-plugin-lodash-fp', () => {
       '_(a).join();',
       '_.flow(_.join())(a);'
     ));
+
+    it('transforms a chain with implicit return and methods after', test(
+      '_(a).split().map(b).join().map(c);',
+      '_.flow(_.split(), _.map(b), _.join(), _.map(c))(a);'
+    ));
   });
 });
