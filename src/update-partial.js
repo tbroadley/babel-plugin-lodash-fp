@@ -4,10 +4,10 @@ import _ from 'lodash/fp';
 import buildCall from './build-call';
 import isLodashCall from './is-lodash-call';
 
-export default (fnNode, params) => {
-  if (!t.isCallExpression(fnNode)) return;
+export default (path, returnNode, params) => {
+  if (!t.isCallExpression(returnNode)) return;
 
-  const { callee, arguments: args } = fnNode;
+  const { callee, arguments: args } = returnNode;
   if (isLodashCall(callee)) {
     const partialArgs = _.flow(
       _.reverse,
@@ -17,6 +17,10 @@ export default (fnNode, params) => {
       _.reverse
     )(args);
 
-    return _.isEmpty(partialArgs) ? callee : buildCall(callee, partialArgs);
+    if (_.isEmpty(partialArgs)) {
+      path.replaceWith(callee);
+    } else if (partialArgs.length !== args.length) {
+      path.replaceWith(buildCall(callee, partialArgs));
+    }
   }
 };

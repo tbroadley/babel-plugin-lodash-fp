@@ -114,6 +114,11 @@ describe('babel-plugin-lodash-fp', () => {
       'a => _(a).map(f).filter(g).value();',
       '_.flow(_.map(f), _.filter(g));'
     ));
+
+    it('does not transform an arrow function that cannot be transformed', test(
+      '(a, b) => _.map(b, a);',
+      '(a, b) => _.map(b, a);'
+    ));
   });
 
   describe('anonymous function partials', () => {

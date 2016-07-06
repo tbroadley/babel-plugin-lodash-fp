@@ -5,7 +5,7 @@ import updateChain from './src/update-chain';
 
 import getPropertyName from './src/get-property-name';
 import buildCall from './src/build-call';
-import buildPartial from './src/build-partial';
+import updatePartial from './src/update-partial';
 
 export default () => ({
   visitor: {
@@ -14,7 +14,7 @@ export default () => ({
         const { expression, params, body } = path.node;
         if (!expression) return;
 
-        path.replaceWith(buildPartial(body, params));
+        updatePartial(path, body, params);
       }
     },
     FunctionExpression: {
@@ -28,7 +28,7 @@ export default () => ({
         const { argument } = returnStatement;
         if (!argument) return;
 
-        path.replaceWith(buildPartial(argument, params));
+        updatePartial(path, argument, params);
       }
     },
     CallExpression(path) {
