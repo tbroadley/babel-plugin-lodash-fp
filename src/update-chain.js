@@ -22,11 +22,11 @@ export default (path) => {
     const grandparentPath = currentPath.parentPath.parentPath;
     const grandparentNode = grandparentPath.node;
     const greatGrandparentNode = grandparentPath.parentPath.node;
-    loop = t.isMemberExpression(grandparentNode) &&
-           getPropertyName(grandparentNode) !== 'value' &&
-           t.isCallExpression(greatGrandparentNode);
+    const expPattern = t.isMemberExpression(grandparentNode) &&
+                       t.isCallExpression(greatGrandparentNode);
+    loop = expPattern && getPropertyName(grandparentNode) !== 'value';
 
-    currentPath = grandparentPath;
+    if (expPattern) currentPath = grandparentPath;
   }
 
   currentPath.parentPath.replaceWith(

@@ -77,5 +77,10 @@ describe('babel-plugin-lodash-fp', () => {
       '_(a).filter(b).map("prop").value();',
       '_.flow(_.filter(b), _.map("prop"))(a);'
     ));
+
+    it('transforms a chain with implicit return', test(
+      '_(a).join();',
+      '_.flow(_.join())(a);'
+    ));
   });
 });
