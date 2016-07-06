@@ -26,11 +26,16 @@ export default (innermost, args) => {
   }
 
   return _.flow(
-    _.map(_.indexOf(_, fnRearg)),
+    _.map(index => ({ index, argIndex: _.indexOf(index)(fnRearg) })),
     _.reduce(
-      (updated, index) => setReplaced(
-        t.callExpression(updated, _.compact([args[index]]))
-      )
+      (updated, { index, argIndex }) => {
+        const currentArg = args[argIndex];
+        if (index === fnRearg.length - 1 && t.isIdentifier(currentArg) && currentArg.name === '_') {
+          return updated;
+        } else {
+          return setReplaced(t.callExpression(updated, _.compact([currentArg])));
+        }
+      }
     )(innermost)
   )(_.range(0, fnRearg.length));
 };

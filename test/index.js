@@ -87,5 +87,10 @@ describe('babel-plugin-lodash-fp', () => {
       '_(a).split().map(b).join().map(c);',
       '_.flow(_.split(), _.map(b), _.join(), _.map(c))(a);'
     ));
+
+    it('transforms a chain that uses a function with multiple arguments', test(
+      '_(a).xorBy(b, c).value();',
+      '_.flow(_.xorBy(c, _, b))(a);'
+    ));
   });
 });
