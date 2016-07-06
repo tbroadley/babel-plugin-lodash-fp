@@ -1,32 +1,34 @@
 import * as t from 'babel-types';
-import _ from 'lodash/fp';
 
 import updateFunctionCall from './src/update-function-call';
 import updateChain from './src/update-chain';
 
 import getPropertyName from './src/get-property-name';
 import buildCall from './src/build-call';
-import isLodashCall from './src/is-lodash-call';
+import buildPartial from './src/build-partial';
 
 export default () => ({
   visitor: {
     ArrowFunctionExpression: {
       exit(path) {
         const { expression, params, body } = path.node;
-        if (!expression || !t.isCallExpression(body)) return;
+        if (!expression) return;
 
-        const { callee, arguments: args } = body;
-        if (isLodashCall(callee)) {
-          const partialArgs = _.flow(
-            _.reverse,
-            _.zip(_, params),
-            _.dropWhile(([arg, param]) => arg && param && arg.name === param.name),
-            _.map(_.first),
-            _.reverse
-          )(args);
+        path.replaceWith(buildPartial(body, params));
+      }
+    },
+    FunctionExpression: {
+      exit(path) {
+        const { params, body: { body: fnStatements } } = path.node;
+        if (fnStatements.length !== 1) return;
 
-          path.replaceWith(_.isEmpty(partialArgs) ? callee : buildCall(callee, partialArgs));
-        }
+        const returnStatement = fnStatements[0];
+        if (!t.isReturnStatement(returnStatement)) return;
+
+        const { argument } = returnStatement;
+        if (!argument) return;
+
+        path.replaceWith(buildPartial(argument, params));
       }
     },
     CallExpression(path) {

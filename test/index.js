@@ -115,4 +115,11 @@ describe('babel-plugin-lodash-fp', () => {
       '_.flow(_.map(f), _.filter(g));'
     ));
   });
+
+  describe('anonymous function partials', () => {
+    it('transforms an anonymous function partial with one parameter', test(
+      '(function(a) { return _.map(a, f); })(b);',
+      '_.map(f)(b);'
+    ));
+  });
 });
