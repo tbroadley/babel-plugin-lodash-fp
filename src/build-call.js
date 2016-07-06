@@ -29,7 +29,7 @@ export default (fn, args) => {
     fn,
     _.flow(
       _.map(index => args[_.indexOf(index)(fnRearg)]),
-      _.thru(lst => _.last(lst).name === '_' ? _.initial(lst) : lst),
+      _.dropRightWhile(_.flow(_.get('name'), _.isEqual('_'))),
       _.compact
     )(_.range(0, fnRearg.length))
   ));
