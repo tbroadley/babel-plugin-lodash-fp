@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-lodash-fp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Transform lodash syntax to lodash/fp syntax using Babel.",
   "keywords": [
     "babel",
