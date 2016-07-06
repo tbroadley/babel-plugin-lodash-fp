@@ -5,8 +5,8 @@ import m from './_mapping';
 import getPropertyName from './get-property-name';
 import setReplaced from './set-replaced';
 
-export default (innermost, args) => {
-  const fnName = getPropertyName(innermost);
+export default (fn, args) => {
+  const fnName = getPropertyName(fn);
 
   let fnArity;
   _.flow(
@@ -25,17 +25,12 @@ export default (innermost, args) => {
     fnRearg = m.methodRearg[fnName] || m.aryRearg[fnArity];
   }
 
-  return _.flow(
-    _.map(index => ({ index, argIndex: _.indexOf(index)(fnRearg) })),
-    _.reduce(
-      (updated, { index, argIndex }) => {
-        const currentArg = args[argIndex];
-        if (index === fnRearg.length - 1 && t.isIdentifier(currentArg) && currentArg.name === '_') {
-          return updated;
-        } else {
-          return setReplaced(t.callExpression(updated, _.compact([currentArg])));
-        }
-      }
-    )(innermost)
-  )(_.range(0, fnRearg.length));
+  return setReplaced(t.callExpression(
+    fn,
+    _.flow(
+      _.map(index => args[_.indexOf(index)(fnRearg)]),
+      _.thru(lst => _.last(lst).name === '_' ? _.initial(lst) : lst),
+      _.compact
+    )(_.range(0, fnRearg.length))
+  ));
 };

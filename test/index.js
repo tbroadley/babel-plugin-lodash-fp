@@ -18,37 +18,32 @@ describe('babel-plugin-lodash-fp', () => {
 
     it('properly modifies simple 2-ary methods', test(
       '_.pick([1, 2, 3], _.even);',
-      '_.pick(_.even)([1, 2, 3]);'
+      '_.pick(_.even, [1, 2, 3]);'
     ));
 
     it('properly modifies 2-ary methods whose argument order does not change', test(
       '_.subtract(5, 3);',
-      '_.subtract(5)(3);'
+      '_.subtract(5, 3);'
     ));
 
     it('properly modifies simple 3-ary methods', test(
       '_.clamp(n, 0, 10);',
-      '_.clamp(0)(10)(n);'
+      '_.clamp(0, 10, n);'
     ));
 
     it('properly modifies 3-ary methods with custom argument reordering', test(
       '_.xorBy([1, 2], [1, 3], _.identity);',
-      '_.xorBy(_.identity)([1, 2])([1, 3]);'
+      '_.xorBy(_.identity, [1, 2], [1, 3]);'
     ));
 
     it('properly modifies simple 4-ary methods', test(
       '_.fill([1, 2, 3], 5, 0, 2);',
-      '_.fill(0)(2)(5)([1, 2, 3]);'
+      '_.fill(0, 2, 5, [1, 2, 3]);'
     ));
 
     it('properly modifies 4-ary methods with custom argument reordering', test(
       '_.updateWith(a, b, c, d);',
-      '_.updateWith(d)(b)(c)(a);'
-    ));
-
-    it('handles usage of default arguments', test(
-      '_.xorBy([1, 2], [1, 3]);',
-      '_.xorBy()([1, 2])([1, 3]);'
+      '_.updateWith(d, b, c, a);'
     ));
   });
 

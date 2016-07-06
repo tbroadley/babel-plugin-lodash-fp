@@ -3,7 +3,7 @@ import * as t from 'babel-types';
 
 import getPropertyName from './get-property-name';
 import setReplaced from './set-replaced';
-import buildCurriedCall from './build-curried-call';
+import buildCall from './build-call';
 
 export default (path) => {
   const { parentPath, node: { arguments: flowArgs }} = path;
@@ -34,7 +34,7 @@ export default (path) => {
     setReplaced(t.callExpression(
       setReplaced(t.callExpression(
         t.memberExpression(t.identifier('_'), t.identifier('flow')),
-        _.map(({ name, args }) => buildCurriedCall(
+        _.map(({ name, args }) => buildCall(
           t.memberExpression(
             t.identifier('_'),
             t.identifier(name)
