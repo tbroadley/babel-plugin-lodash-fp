@@ -94,5 +94,10 @@ describe('babel-plugin-lodash-fp', () => {
       'a => _.map(a, f);',
       '_.map(f);'
     ));
+
+    it('transforms an arrow function partial with two parameters', test(
+      '(a, f) => _.map(a, f);',
+      '_.map;'
+    ));
   });
 });

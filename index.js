@@ -20,13 +20,15 @@ export default () => ({
         const { object } = callee;
         if (!t.isIdentifier(object) || !t.name === '_') return;
 
-        path.replaceWith(buildCall(callee, _.flow(
+        const partialArgs = _.flow(
           _.reverse,
           _.zip(_, params),
-          _.dropWhile(element => element[0] && element[1] && element[0].name === element[1].name),
+          _.dropWhile(([arg, param]) => arg && param && arg.name === param.name),
           _.map(_.first),
           _.reverse
-        )(args)));
+        )(args);
+
+        path.replaceWith(_.isEmpty(partialArgs) ? callee : buildCall(callee, partialArgs));
       }
     },
     CallExpression(path) {
