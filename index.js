@@ -6,6 +6,7 @@ import updateChain from './src/update-chain';
 
 import getPropertyName from './src/get-property-name';
 import buildCall from './src/build-call';
+import isLodashCall from './src/is-lodash-call';
 
 export default () => ({
   visitor: {
@@ -15,20 +16,17 @@ export default () => ({
         if (!expression || !t.isCallExpression(body)) return;
 
         const { callee, arguments: args } = body;
-        if (!t.isMemberExpression(callee)) return;
+        if (isLodashCall(callee)) {
+          const partialArgs = _.flow(
+            _.reverse,
+            _.zip(_, params),
+            _.dropWhile(([arg, param]) => arg && param && arg.name === param.name),
+            _.map(_.first),
+            _.reverse
+          )(args);
 
-        const { object } = callee;
-        if (!t.isIdentifier(object) || !t.name === '_') return;
-
-        const partialArgs = _.flow(
-          _.reverse,
-          _.zip(_, params),
-          _.dropWhile(([arg, param]) => arg && param && arg.name === param.name),
-          _.map(_.first),
-          _.reverse
-        )(args);
-
-        path.replaceWith(_.isEmpty(partialArgs) ? callee : buildCall(callee, partialArgs));
+          path.replaceWith(_.isEmpty(partialArgs) ? callee : buildCall(callee, partialArgs));
+        }
       }
     },
     CallExpression(path) {

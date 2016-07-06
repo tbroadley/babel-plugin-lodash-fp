@@ -99,5 +99,10 @@ describe('babel-plugin-lodash-fp', () => {
       '(a, f) => _.map(a, f);',
       '_.map;'
     ));
+
+    it('transforms an arrow function partial that uses chaining', test(
+      'a => _.chain(a).map(f).value();',
+      '_.flow(_.map(f));'
+    ));
   });
 });
