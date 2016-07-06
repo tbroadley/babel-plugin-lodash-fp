@@ -88,4 +88,11 @@ describe('babel-plugin-lodash-fp', () => {
       '_.flow(_.xorBy(c, _, b))(a);'
     ));
   });
+
+  describe('arrow function partials', () => {
+    it('transforms an arrow function partial with one parameter', test(
+      'a => _.map(a, f);',
+      '_.map(f);'
+    ));
+  });
 });
