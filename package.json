@@ -16,10 +16,12 @@
   },
   "bugs": "https://github.com/tbroadley/babel-plugin-lodash-fp/issues",
   "license": "MIT",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
+    "build": "babel src -d dist",
     "test": "mocha --compilers js:babel-register"
   },
+  "prepublish": "npm run build",
   "devDependencies": {
     "babel-cli": "^6.10.1",
     "babel-preset-es2015": "^6.9.0",
