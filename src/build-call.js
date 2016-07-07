@@ -8,16 +8,20 @@ import setReplaced from './set-replaced';
 export default (fn, args) => {
   const fnName = getPropertyName(fn);
 
-  let fnArity;
-  _.flow(
-    _.map(_.toString),
-    _.forEach(arity => {
-      if (_.includes(fnName)(m.aryMethod[arity])) fnArity = arity;
-    })
+  let fnArity = _.flow(
+    _.map(_.flow(
+      _.toString,
+      _.get(_, m.aryMethod),
+      _.includes(fnName))
+    ),
+    _.findIndex(_.identity),
+    _.add(1)
   )(_.range(1, 5));
 
   let fnRearg;
-  if (fnArity === '1') {
+  if (fnArity === 0) {
+    fnRearg = _.range(0, args.length);
+  } else if (fnArity === 1) {
     fnRearg = [0];
   } else if (m.skipRearg[fnName]) {
     fnRearg = _.flow(_.toNumber, _.range(0))(fnArity);
