@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import _ from 'lodash/fp';
 
 function plugin(str) {
-  return transform(str, { plugins: ['./index'] }).code;
+  return transform(str, { plugins: ['./src/index'] }).code;
 }
 
 function test(toTest, expected) {
