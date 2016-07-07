@@ -46,6 +46,11 @@ describe('babel-plugin-lodash-fp', () => {
       '_.updateWith(a, b, c, d);',
       '_.updateWith(d, b, c, a);'
     ));
+
+    it('does not modify a function with no argument reordering', test(
+      '_.toPairs({ a: 1 });',
+      '_.toPairs({ a: 1 });'
+    ));
   });
 
   describe('chaining', () => {
@@ -87,6 +92,11 @@ describe('babel-plugin-lodash-fp', () => {
     it('transforms a chain that uses a function with multiple arguments', test(
       '_(a).xorBy(b, c).value();',
       '_.flow(_.xorBy(c, _, b))(a);'
+    ));
+
+    it('transforms a chain with a function with no argument reordering', test(
+      '_(a).toPairs();',
+      '_.flow(_.toPairs)(a);'
     ));
   });
 

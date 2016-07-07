@@ -29,12 +29,14 @@ export default (fn, args) => {
     fnRearg = m.methodRearg[fnName] || m.aryRearg[fnArity];
   }
 
-  return setReplaced(t.callExpression(
-    fn,
-    _.flow(
-      _.map(index => args[_.indexOf(index)(fnRearg)]),
-      _.dropRightWhile(_.flow(_.get('name'), _.isEqual('_'))),
-      _.compact
-    )(_.range(0, fnRearg.length))
-  ));
+  const newArgs = _.flow(
+    _.map(index => args[_.indexOf(index)(fnRearg)]),
+    _.dropRightWhile(_.flow(_.get('name'), _.isEqual('_')))
+  )(_.range(0, fnRearg.length));
+
+  if (_.isEmpty(newArgs)) {
+    return fn;
+  } else {
+    return setReplaced(t.callExpression(fn, _.compact(newArgs)));
+  }
 };
