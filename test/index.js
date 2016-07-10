@@ -81,7 +81,7 @@ describe('babel-plugin-lodash-fp', () => {
 
     it('transforms a chain with implicit return', test(
       '_(a).join();',
-      '_.join(a);'
+      '_.join(undefined, a);'
     ));
 
     it('transforms a chain with implicit return and methods after', test(
