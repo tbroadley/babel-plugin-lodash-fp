@@ -148,6 +148,26 @@ describe('babel-plugin-lodash-fp', () => {
       '_.map(f)(b);'
     ));
 
+    it('transforms an anonymous function partial with two parameters', test(
+      '(function (f, a) { return _.map(a, f); })(g, b);',
+      '_.map(g, b);'
+    ));
+
+    it('transforms an anonymous function partial that uses chaining', test(
+      '(function (a) { return _.chain(a).map(f).value(); })(b);',
+      '_.flow(_.map(f))(b);'
+    ));
+
+    it('transforms an anonymous function partial that uses implicit chaining', test(
+      '(function (a) { return _(a).map(f).value(); })(b);',
+      '_.flow(_.map(f))(b);'
+    ));
+
+    it('transforms an anonymous function partial that uses chaining with multiple methods', test(
+      '(function (a) { return _(a).map(f).filter(g).value(); })(b);',
+      '_.flow(_.map(f), _.filter(g))(b);'
+    ));
+
     it('does not transform an anonymous function that cannot be transformed', test(
       '(function (a, f) { return _.map(a, f); })(c, d);',
       '(function (a, f) {\n  return _.map(f, a);\n})(c, d);'
