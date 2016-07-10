@@ -30,8 +30,21 @@ export default (path) => {
     if (expPattern) currentPath = grandparentPath;
   }
 
-  currentPath.parentPath.replaceWith(
-    setReplaced(t.callExpression(
+  let replaceTree;
+  if (flowFunctions.length === 0) {
+    replaceTree = flowArgs[0];
+  } else if (flowFunctions.length === 1) {
+    let { name, args } = flowFunctions[0];
+
+    replaceTree = buildCall(
+      t.memberExpression(
+        t.identifier('_'),
+        t.identifier(name)
+      ),
+      _.concat(flowArgs, args)
+    );
+  } else {
+    replaceTree = setReplaced(t.callExpression(
       setReplaced(t.callExpression(
         t.memberExpression(t.identifier('_'), t.identifier('flow')),
         _.map(({ name, args }) => buildCall(
@@ -43,6 +56,8 @@ export default (path) => {
         ))(flowFunctions)
       )),
       flowArgs
-    ))
-  );
+    ));
+  }
+
+  currentPath.parentPath.replaceWith(replaceTree);
 };

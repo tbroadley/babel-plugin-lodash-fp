@@ -56,22 +56,22 @@ describe('babel-plugin-lodash-fp', () => {
   describe('chaining', () => {
     it('transforms a simple chain', test(
       '_.chain(a).map(b).value();',
-      '_.flow(_.map(b))(a);'
+      '_.map(b, a);'
     ));
 
     it('transforms an implicit chain', test(
       '_(a).map(b).value();',
-      '_.flow(_.map(b))(a);'
+      '_.map(b, a);'
     ));
 
     it('transforms a no-op simple chain', test(
       '_.chain(a).value();',
-      '_.flow()(a);'
+      'a;'
     ));
 
     it('transforms a no-op implicit chain', test(
       '_(a).value();',
-      '_.flow()(a);'
+      'a;'
     ));
 
     it('transforms a multi-method chain', test(
@@ -81,7 +81,7 @@ describe('babel-plugin-lodash-fp', () => {
 
     it('transforms a chain with implicit return', test(
       '_(a).join();',
-      '_.flow(_.join())(a);'
+      '_.join(a);'
     ));
 
     it('transforms a chain with implicit return and methods after', test(
@@ -91,12 +91,12 @@ describe('babel-plugin-lodash-fp', () => {
 
     it('transforms a chain that uses a function with multiple arguments', test(
       '_(a).xorBy(b, c).value();',
-      '_.flow(_.xorBy(c, _, b))(a);'
+      '_.xorBy(c, a, b);'
     ));
 
     it('transforms a chain with a function with no argument reordering', test(
       '_(a).toPairs();',
-      '_.flow(_.toPairs)(a);'
+      '_.toPairs(a);'
     ));
   });
 
@@ -113,12 +113,12 @@ describe('babel-plugin-lodash-fp', () => {
 
     it('transforms an arrow function partial that uses chaining', test(
       'a => _.chain(a).map(f).value();',
-      '_.flow(_.map(f));'
+      '_.map(f);'
     ));
 
     it('transforms an arrow function partial that uses implicit chaining', test(
       'a => _(a).map(f).value();',
-      '_.flow(_.map(f));'
+      '_.map(f);'
     ));
 
     it('transforms an arrow function partial that uses chaining with multiple methods', test(
@@ -155,12 +155,12 @@ describe('babel-plugin-lodash-fp', () => {
 
     it('transforms an anonymous function partial that uses chaining', test(
       '(function (a) { return _.chain(a).map(f).value(); })(b);',
-      '_.flow(_.map(f))(b);'
+      '_.map(f)(b);'
     ));
 
     it('transforms an anonymous function partial that uses implicit chaining', test(
       '(function (a) { return _(a).map(f).value(); })(b);',
-      '_.flow(_.map(f))(b);'
+      '_.map(f)(b);'
     ));
 
     it('transforms an anonymous function partial that uses chaining with multiple methods', test(
