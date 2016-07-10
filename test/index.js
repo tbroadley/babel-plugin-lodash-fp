@@ -135,6 +135,11 @@ describe('babel-plugin-lodash-fp', () => {
       '(a, f) => _.map(a, f);',
       '(a, f) => _.map(f, a);'
     ));
+
+    it('transforms an arrow function with just a return statement', test(
+      'a => { return _.map(a, f); }',
+      '_.map(f);'
+    ));
   });
 
   describe('anonymous function partials', () => {

@@ -12,9 +12,11 @@ export default () => ({
     ArrowFunctionExpression: {
       exit(path) {
         const { expression, params, body } = path.node;
-        if (!expression) return;
-
-        updatePartial(path, body, params);
+        if (expression) {
+          updatePartial(path, body, params);
+        } else if (body.body.length === 1 && t.isReturnStatement(body.body[0])) {
+          updatePartial(path, body.body[0].argument, params)
+        }
       }
     },
     FunctionExpression: {
