@@ -1,5 +1,5 @@
-import { transform } from 'babel-core';
 import assert from 'assert';
+import { transform } from 'babel-core';
 
 function plugin(str) {
   return transform(str, { plugins: ['./src/index'] }).code;

@@ -1,8 +1,8 @@
 import * as t from 'babel-types';
 import _ from 'lodash/fp';
 
-import m from './_mapping';
 import getPropertyName from './get-property-name';
+import m from './_mapping';
 import setReplaced from './set-replaced';
 
 export default (fn, args) => {

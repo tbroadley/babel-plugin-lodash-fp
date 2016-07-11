@@ -1,11 +1,11 @@
 import * as t from 'babel-types';
 
-import updateFunctionCall from './update-function-call';
 import updateChain from './update-chain';
+import updateFunctionCall from './update-function-call';
+import updatePartial from './update-partial';
 
 import getPropertyName from './get-property-name';
 import buildCall from './build-call';
-import updatePartial from './update-partial';
 
 export default () => ({
   visitor: {

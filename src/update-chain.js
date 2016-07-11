@@ -1,9 +1,9 @@
-import _ from 'lodash/fp';
 import * as t from 'babel-types';
+import _ from 'lodash/fp';
 
+import buildCall from './build-call';
 import getPropertyName from './get-property-name';
 import setReplaced from './set-replaced';
-import buildCall from './build-call';
 
 export default (path) => {
   const { parentPath, node: { arguments: flowArgs }} = path;
