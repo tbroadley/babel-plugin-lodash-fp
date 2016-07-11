@@ -15,7 +15,10 @@ export default () => ({
         if (expression) {
           updatePartial(path, body, params);
         } else if (body.body.length === 1 && t.isReturnStatement(body.body[0])) {
-          updatePartial(path, body.body[0].argument, params)
+          const { argument } = body.body[0];
+          if (!argument) return;
+
+          updatePartial(path, argument, params)
         }
       }
     },
