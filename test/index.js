@@ -1,6 +1,5 @@
 import { transform } from 'babel-core';
 import { expect } from 'chai';
-import _ from 'lodash/fp';
 
 function plugin(str) {
   return transform(str, { plugins: ['./src/index'] }).code;
