@@ -1,12 +1,12 @@
 import { transform } from 'babel-core';
-import { expect } from 'chai';
+import assert from 'assert';
 
 function plugin(str) {
   return transform(str, { plugins: ['./src/index'] }).code;
 }
 
 function test(toTest, expected) {
-  return () => expect(plugin(toTest)).to.equal(expected);
+  return () => assert.deepEqual(plugin(toTest), expected);
 }
 
 describe('babel-plugin-lodash-fp', () => {
