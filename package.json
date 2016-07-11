@@ -20,7 +20,8 @@
   "scripts": {
     "build": "babel src -d dist",
     "prepublish": "npm run build",
-    "test": "mocha --compilers js:babel-register"
+    "test": "mocha --compilers js:babel-register",
+    "test:watch": "mocha --compilers js:babel-register --watch"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",
