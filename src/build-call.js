@@ -29,14 +29,23 @@ export default (fn, args) => {
     fnRearg = m.methodRearg[fnName] || m.aryRearg[fnArity];
   }
 
+  const augmentedArgs = _.concat(
+    args, _.times(
+      () => t.identifier('undefined'),
+      fnRearg.length - args.length
+    )
+  );
+
   const newArgs = _.flow(
-    _.map(index => args[_.indexOf(index)(fnRearg)]),
+    _.map(index => augmentedArgs[_.indexOf(index)(fnRearg)]),
     _.dropRightWhile(_.flow(_.get('name'), _.isEqual('_')))
   )(_.range(0, fnRearg.length));
 
   if (_.isEmpty(newArgs)) {
     return fn;
   } else {
-    return setReplaced(t.callExpression(fn, _.compact(newArgs)));
+    return setReplaced(t.callExpression(fn,
+      _.dropRightWhile(_.flow(_.get('name'), _.isEqual('undefined')))(newArgs)
+    ));
   }
 };

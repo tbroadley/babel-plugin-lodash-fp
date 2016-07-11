@@ -20,7 +20,8 @@ export default (path, returnNode, params) => {
     if (_.isEmpty(partialArgs)) {
       path.replaceWith(callee);
     } else if (partialArgs.length !== args.length) {
-      path.replaceWith(buildCall(callee, partialArgs));
+      path.replaceWith(buildCall(callee, _.concat(t.identifier('undefined'), partialArgs)));
+
     }
   }
 };
