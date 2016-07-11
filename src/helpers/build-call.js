@@ -24,7 +24,7 @@ export default (fn, args) => {
   } else if (fnArity === 1) {
     fnRearg = [0];
   } else if (m.skipRearg[fnName]) {
-    fnRearg = _.flow(_.toNumber, _.range(0))(fnArity);
+    fnRearg = _.range(0, fnArity);
   } else {
     fnRearg = m.methodRearg[fnName] || m.aryRearg[fnArity];
   }
