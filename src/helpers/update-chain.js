@@ -9,6 +9,10 @@ export default (path) => {
   const { parentPath, node: { arguments: flowArgs }} = path;
 
   let currentPath = parentPath;
+  /*
+   * If the chain is of the form `_.chain(a).value()`, we can skip the loop
+   * below entirely.
+   */
   let loop = getPropertyName(currentPath.node) !== 'value';
   let flowFunctions = [];
   while (loop) {
@@ -20,6 +24,10 @@ export default (path) => {
       args
     });
 
+    /*
+     * grandparentPath:      _(a) ... .fn().fn2
+     * greatGrandparentPath: _(a) ... .fn()
+     */
     const grandparentPath = currentPath.parentPath.parentPath;
     const grandparentNode = grandparentPath.node;
     const greatGrandparentNode = grandparentPath.parentPath.node;
@@ -36,6 +44,7 @@ export default (path) => {
   } else if (flowFunctions.length === 1) {
     let { name, args } = flowFunctions[0];
 
+    // Replaces a chain of the form `_(a).map(b).value()` with `_.map(b, a)`.
     replaceTree = buildCall(
       t.memberExpression(
         t.identifier('_'),
@@ -44,6 +53,7 @@ export default (path) => {
       _.concat(flowArgs, args)
     );
   } else {
+    // Replaces the chain with a `_.flow` expression.
     replaceTree = setReplaced(t.callExpression(
       setReplaced(t.callExpression(
         t.memberExpression(t.identifier('_'), t.identifier('flow')),

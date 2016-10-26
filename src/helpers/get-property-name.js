@@ -1,5 +1,9 @@
 import * as t from 'babel-types';
 
+/* Returns the property name of an expression like:
+ *   a.name => "name"
+ *   a["name"] => "name"
+ */
 export default (node) => {
   t.assertMemberExpression(node);
 
